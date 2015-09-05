@@ -1,29 +1,32 @@
 import React, { Component } from 'react';
-import { NICE, SUPER_NICE } from './colors';
 
-class Counter extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { counter: 0 };
-    this.interval = setInterval(() => this.tick(), 1000);
+// This is TypeScript's implementation of Extend:
+var __extends = function (d, b) {
+  for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+  function __() { this.constructor = d; }
+  __.prototype = b.prototype;
+  d.prototype = new __();
+};
+
+function decorate (BaseComponent) {
+  function DecoratedComponent (...args) {
+    console.log("Running decorated constructor!");
+    BaseComponent.apply(this, ...args)
   }
 
-  tick() {
-    this.setState({
-      counter: this.state.counter + this.props.increment
-    });
-  }
+  __extends(DecoratedComponent, BaseComponent);
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
+  return DecoratedComponent;
+}
+
+@decorate
+class Number extends Component {
+  static defaultProps = {
+    value: 1,
+  };
 
   render() {
-    return (
-      <h1 style={{ color: this.props.color }}>
-        Counter ({this.props.increment}): {this.state.counter}
-      </h1>
-    );
+    return <h1>{this.props.value} (defaultProps={'' + Number.defaultProps})</h1>;
   }
 }
 
@@ -31,8 +34,8 @@ export class App extends Component {
   render() {
     return (
       <div>
-        <Counter increment={1} color={NICE} />
-        <Counter increment={5} color={SUPER_NICE} />
+        <Number />
+        <Number value={42} />
       </div>
     );
   }
